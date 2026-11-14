@@ -1,7 +1,7 @@
 import logging
 
 import uvicorn
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import (
@@ -21,20 +21,17 @@ from .storage import (
     save_session,
 )
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
-# Create FastAPI application
 app = FastAPI(
     title=APP_NAME,
     description="API for tracking study time for DevOps studies",
 )
 
-# Configure CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ALLOW_ORIGINS,
@@ -46,74 +43,51 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    """Root endpoint returning API information"""
     return {"message": "DevOps Study Tracker API"}
 
 
 @app.get("/health")
 async def health():
-    """Health endpoint for kubernetes probes"""
     return {"status": "healthy"}
 
 
 @app.post("/sessions", response_model=StudySession)
 async def create_session(session: StudySessionCreate):
-    """Create a new study session"""
-    logger.info(
-        f"Creating new session: {session.minutes} minutes with tag: {session.tag}"
-    )
     try:
         return save_session(session)
-    except OSError as e:
-        logger.exception("Error creating session")
+    except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"Error creating session: {e!s}",
-        ) from e
+            detail="Error creating session",
+        ) from exc
 
 
 @app.get("/sessions", response_model=list[StudySession])
-async def read_sessions(
-    tag: str | None = Query(None, description="Filter sessions by tag"),
-):
-    """Get all study sessions, optionally filtered by tag"""
+async def read_sessions(tag: str | None = None):
     try:
         if tag:
-            logger.info(f"Fetching sessions with tag: {tag}")
             return get_sessions_by_tag(tag)
-
-        logger.info("Fetching all sessions")
         return get_all_sessions()
-
-    except OSError as e:
-        logger.exception("Error fetching sessions")
+    except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"Error fetching sessions: {e!s}",
-        ) from e
+            detail="Error fetching sessions",
+        ) from exc
 
 
 @app.get("/stats", response_model=Stats)
 async def read_stats():
-    """Get aggregated statistics about study sessions"""
-    logger.info("Fetching statistics")
     try:
         return get_statistics()
-    except OSError as e:
-        logger.exception("Error fetching statistics")
+    except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"Error fetching statistics: {e!s}",
-        ) from e
-
-
-# Marker for CI pipeline
-# This comment is used to trigger the CI pipeline when changes are made to this file.
+            detail="Error fetching statistics",
+        ) from exc
 
 
 def main():
-    """Entry point for running the API server"""
-    logger.info(f"Starting {APP_NAME} API")
+    logger.info("Starting %s API", APP_NAME)
     uvicorn.run("backend.main:app", host=API_HOST, port=API_PORT, reload=True)
 
 
