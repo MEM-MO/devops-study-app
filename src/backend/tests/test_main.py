@@ -89,11 +89,11 @@ async def test_create_session(client: AsyncClient):
     assert "timestamp" in data
 
     # Verify data was saved using CSV
-    with open(TEST_DATA_FILE, "r", newline="") as f:
-        reader = list(csv.DictReader(f))
-        assert len(reader) == 1
-        assert int(reader[0]["minutes"]) == 30
-        assert reader[0]["tag"] == "AWS"
+    reader = read_test_sessions()
+
+    assert len(reader) == 1
+    assert int(reader[0]["minutes"]) == 30
+    assert reader[0]["tag"] == "AWS"
 
 
 @pytest.mark.asyncio
