@@ -73,3 +73,47 @@ jobs:
           header: test-coverage
           recreate: true
           path: code-coverage-results.md
+
+      - name: Build an image from Dockerfile
+        run: docker build -t backend:${{ github.sha }} -f Dockerfile .
+
+      - name: Run Trivy vulnerability scanner
+        id: trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: backend:${{ github.sha }}
+          format: "table"
+          output: src/backend/trivy-results.txt
+          exit-code: "0"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+
+      - name: Publish Trivy report
+        if: always() && steps.trivy.outcome != 'skipped'
+        run: |
+          {
+            echo "## Docker Image Vulnerability Scan"
+            echo ""
+            echo '```text'
+            cat trivy-results.txt
+            echo '```'
+          } > trivy-report.md
+
+          cat trivy-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Trivy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: src/backend/trivy-results.txt
+          retention-days: 7
+
+      - name: Add Trivy PR Comment
+        if: always() && steps.trivy.outcome != 'skipped'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: trivy-security
+          recreate: true
+          path: src/backend/trivy-report.md
