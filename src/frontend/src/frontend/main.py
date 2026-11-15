@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-import requests
 import logging
-from datetime import datetime
 import os
-from typing import Dict, List, Any
+from datetime import datetime
+from typing import Any, Dict, List
+
+import requests
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 
 # Configure logging
 logging.basicConfig(
