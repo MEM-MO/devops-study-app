@@ -5,11 +5,7 @@ description = "Frontend for DevOps Study Tracker application"
 readme = "README.md"
 authors = [{ name = "MEMO", email = "memo@duck.com" }]
 requires-python = ">=3.13"
-dependencies = [
-    "flask>=3.1.3",
-    "requests>=2.34.2",
-    "typing>=3.10.0.0",
-]
+dependencies = ["flask>=3.1.3", "requests>=2.34.2", "typing>=3.10.0.0"]
 
 [project.scripts]
 study-tracker-frontend = "frontend.main:main"
@@ -24,3 +20,6 @@ study-tracker-frontend = ["setuptools"]
 [build-system]
 requires = ["uv_build>=0.13.6,<0.14.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = ["pytest>=9.2.0", "responses>=0.26.3"]
