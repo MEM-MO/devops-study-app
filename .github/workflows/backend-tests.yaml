@@ -96,7 +96,7 @@ jobs:
             echo "## Docker Image Vulnerability Scan"
             echo ""
             echo '```text'
-            cat src/backend/trivy-results.txt
+            cat trivy-results.txt
             echo '```'
           } > trivy-report.md
 
@@ -107,4 +107,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trivy-report
-          path: src/backend/trivy-results.txt
+          path: ./src/backend/trivy-results.txt
+          retention-days: 7
