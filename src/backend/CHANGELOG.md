@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/MEM-MO/devops-study-app/compare/backend-v0.2.0...backend-v0.2.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* **gha:** capitalized name isn't accepted in the ghcr ([#11](https://github.com/MEM-MO/devops-study-app/issues/11)) ([ab04fd3](https://github.com/MEM-MO/devops-study-app/commit/ab04fd3f9f81a7ddaaff0f0c313722be924c3a0f))
+
 ## [0.2.0](https://github.com/MEM-MO/devops-study-app/compare/backend-v0.1.0...backend-v0.2.0) (2026-11-20)
 
 
