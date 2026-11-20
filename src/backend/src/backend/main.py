@@ -91,5 +91,6 @@ def main():
     uvicorn.run("backend.main:app", host=API_HOST, port=API_PORT, reload=True)
 
 
+# this is just a comment to trigger the pipeline to tag this version and build an image of it
 if __name__ == "__main__":
     main()
