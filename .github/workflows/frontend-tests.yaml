@@ -91,15 +91,18 @@ jobs:
       - name: Publish Trivy report
         if: always()
         run: |
-          if [ -s trivy-results.txt ]; then
-            {
-              echo "## Docker Image Vulnerability Scan"
-              echo ""
+          {
+            echo "## Docker Image Vulnerability Scan"
+            echo ""
+
+            if [ -s trivy-results.txt ]; then
               echo '```text'
               cat trivy-results.txt
               echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
+            else
+              echo "No Trivy results were generated."
+            fi
+          } > trivy-report.md
 
       - name: Upload Trivy report
         if: always()
@@ -108,3 +111,11 @@ jobs:
           name: trivy-report
           path: src/frontend/trivy-results.txt
           retention-days: 7
+
+      - name: Add Trivy PR Comment
+        if: always() && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: trivy-security
+          recreate: true
+          path: src/frontend/trivy-report.md
