@@ -92,5 +92,6 @@ def main():
 
 
 # this is just a comment to trigger the pipeline to tag this version and build an image of it
+# secundary message to trigger a run after the previous one failed on me having a capitalized username
 if __name__ == "__main__":
     main()
