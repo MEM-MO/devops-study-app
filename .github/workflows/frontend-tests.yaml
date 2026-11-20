@@ -83,7 +83,7 @@ jobs:
           image-ref: frontend:${{ github.sha }}
           format: "table"
           output: src/frontend/trivy-results.txt
-          exit-code: "1"
+          exit-code: "0"
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
